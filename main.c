@@ -2,6 +2,7 @@
 #include "led.h"
 #include "adc.h"
 #include "fan.h"
+#include "kelvin.h"
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
@@ -18,12 +19,7 @@ FUSES = {
 
 static const uint8_t FAN_MIN = 16;
 
-static inline int16_t
-t(const int8_t deg) {
-    return (int16_t) deg * 16;
-}
-
-static const int32_t TARGET_TEMP = 40;
+static const uint16_t TARGET_TEMP = kelvin(40);
 static const int32_t MAX_INTEGRAL = 524288;
 
 int
@@ -48,12 +44,12 @@ main() {
             const int16_t temp_ext = adc_temp_ext();
             const int16_t temp_int = adc_temp_int();
 
-            if (temp_ext > t(94)) {
+            if (temp_ext > kelvin(94)) {
                 // Too hot or sensor is broken.
                 led_set_mode(LED_FAST_FLASHING);
                 FAN = 255;
-            } else if (temp_ext < t(10)) {
-                if (temp_int < temp_ext + t(7)) {
+            } else if (temp_ext < kelvin(10)) {
+                if (temp_int < temp_ext + kelvin_delta(7)) {
                     // It is really cold. Stop the fan.
                     led_set_mode(LED_SLOW_FLASHING);
                     FAN = 0;
@@ -63,7 +59,7 @@ main() {
                     FAN = 255;
                 }
             } else {
-                int16_t delta = temp_ext - t(TARGET_TEMP);
+                int16_t delta = temp_ext - TARGET_TEMP;
                 integral += delta;
                 if (integral < 0)
                     integral = 0;

@@ -1,4 +1,5 @@
 #include "adc.h"
+#include "kelvin.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -8,15 +9,15 @@
 static volatile bool data_ready = false;
 static volatile uint16_t channels[2] = { 0 };
 
-static int16_t temp_int = 0;
-static int16_t temp_ext = 0;
+static uint16_t temp_int = 0;
+static uint16_t temp_ext = 0;
 
-static inline int16_t
+static inline uint16_t
 convert_temp_ext(uint16_t adc) {
     return (int16_t)((int32_t)((int16_t)EXT_CAL_COUNTS - adc) * EXT_CAL_FAC / 4096) + EXT_CAL_TEMP;
 }
 
-static inline int16_t
+static inline uint16_t
 convert_temp_int(uint16_t adc) {
     return ((int16_t)adc - INT_CAL_COUNTS) * INT_CAL_FAC / 64 + INT_CAL_TEMP;
 }
@@ -52,11 +53,11 @@ adc_fetch(void) {
     return true;
 }
 
-int16_t adc_temp_ext(void) {
+uint16_t adc_temp_ext(void) {
     return temp_ext;
 }
 
-int16_t adc_temp_int(void) {
+uint16_t adc_temp_int(void) {
     return temp_int;
 }
 
