@@ -14,12 +14,17 @@ static uint16_t temp_ext = 0;
 
 static inline uint16_t
 convert_temp_ext(uint16_t adc) {
-    return (int16_t)((int32_t)((int16_t)EXT_CAL_COUNTS - adc) * EXT_CAL_FAC / 4096) + EXT_CAL_TEMP;
+    const uint32_t base = (uint32_t)EXT_CAL_COUNTS * EXT_CAL_FAC + (uint32_t)4096 * EXT_CAL_TEMP;
+    uint32_t sub = (uint32_t)adc * EXT_CAL_FAC;
+    uint32_t ret = (base - sub) / 4096;
+    return (uint16_t)ret;
 }
 
 static inline uint16_t
 convert_temp_int(uint16_t adc) {
-    return ((int16_t)adc - INT_CAL_COUNTS) * INT_CAL_FAC / 64 + INT_CAL_TEMP;
+    uint16_t val = adc * INT_CAL_FAC;
+    const uint16_t base = INT_CAL_COUNTS * INT_CAL_FAC - INT_CAL_TEMP * 32;
+    return (val - base) / 32;
 }
 
 static const uint8_t admuxx[2] = {
