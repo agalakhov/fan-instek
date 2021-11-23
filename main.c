@@ -41,8 +41,8 @@ main() {
         sleep_mode();
         if (adc_fetch()) {
             // approx. every 7 ms
-            const int16_t temp_ext = adc_temp_ext();
-            const int16_t temp_int = adc_temp_int();
+            const uint16_t temp_ext = adc_temp_ext();
+            const uint16_t temp_int = adc_temp_int();
 
             if (temp_ext > kelvin(94)) {
                 // Too hot or sensor is broken.
