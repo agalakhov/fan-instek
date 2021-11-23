@@ -22,8 +22,8 @@ convert_temp_ext(uint16_t adc) {
 
 static inline uint16_t
 convert_temp_int(uint16_t adc) {
-    uint16_t val = adc * INT_CAL_FAC;
-    const uint16_t base = INT_CAL_COUNTS * INT_CAL_FAC - INT_CAL_TEMP * 32;
+    uint32_t val = adc * INT_CAL_FAC;
+    const uint32_t base = INT_CAL_COUNTS * INT_CAL_FAC - INT_CAL_TEMP * 32;
     return (val - base) / 32;
 }
 
